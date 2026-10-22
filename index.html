@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heron Precision</title>
+<meta name="description" content="Autonomy hardware and software for uncrewed vehicles across air, ground, and sea. United States owned.">
+<meta property="og:site_name" content="Heron Precision">
+<meta property="og:title" content="Autonomy hardware and software">
+<meta property="og:description" content="Autonomy hardware and software for uncrewed vehicles across air, ground, and sea.">
+<meta property="og:url" content="https://heronprecision.com/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://heronprecision.com/card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Heron Precision home page: the headline beside a vehicle flying a route between waypoints.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://heronprecision.com/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/fonts/AdwaitaSans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/tokens.css">
+<link rel="stylesheet" href="/ui-tokens.css">
+<style>
+/* Type sizes are steps from the brand scale only (size = [line-height, weight]):
+   48/56 600 · 28/36 600 · 20/28 600 · 18/28 · 16/24 · 14/20 · 12/16.
+   Hierarchy is size, never case: no uppercase, no tracking anywhere on this page.
+   The graphic system is the house one: short ticks as markers and separators,
+   and no full-width rules. */
+@font-face { font-family: "Adwaita Sans"; src: url("/fonts/AdwaitaSans.woff2") format("woff2"); font-weight: 100 900; font-display: block; }
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0; background: var(--hron-surface-page); color: var(--hron-ink-primary);
+  font: 400 16px/24px "Adwaita Sans", system-ui, sans-serif;
+  position: relative; min-height: 100vh; display: flex; flex-direction: column;
+}
+a { color: var(--hron-link); text-underline-offset: 3px; }
+.wrap { width: 100%; max-width: 1120px; margin-left: auto; margin-right: auto; padding: 0 96px 0 48px; }
+
+/* The section index: one tick per section, fixed at the right edge. The
+   current one is long and accented; each names its section on hover and jumps
+   to it on click. Over the ink band the ticks lighten, so they are never ink on
+   ink. A solid tab once sat above it; a designer read it as attention with
+   nothing to give back, and it went. */
+.ladder { position: fixed; z-index: 2; top: 56px; right: 0; width: 48px; display: flex; flex-direction: column; align-items: center; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.ladder a { position: relative; display: flex; justify-content: center; width: 48px; padding: 6px 0; }
+.ladder a::after { content: ""; width: 12px; border-top: 3px solid var(--hron-ink-muted); opacity: 0.6;
+  transition: width var(--hron-duration-base) var(--hron-easing-standard), border-color var(--hron-duration-base) var(--hron-easing-standard), opacity var(--hron-duration-base) var(--hron-easing-standard); }
+.ladder a:hover::after { width: 20px; opacity: 1; }
+.ladder a[aria-current]::after { width: 24px; border-color: var(--hron-accent-fill); opacity: 1; }
+.ladder span { position: absolute; right: 44px; top: 50%; transform: translate(4px, -50%); white-space: nowrap;
+  font-size: 12px; line-height: 16px; color: var(--hron-ink-primary); background: var(--card-bg); box-shadow: inset 0 0 0 1px var(--card-line); padding: 4px 8px; border-radius: 2px;
+  opacity: 0; pointer-events: none; transition: opacity var(--hron-duration-fast) var(--hron-easing-standard), transform var(--hron-duration-fast) var(--hron-easing-standard); }
+.ladder a:hover span, .ladder a:focus-visible span { opacity: 1; transform: translate(0, -50%); }
+html.over-band .ladder a::after { border-color: var(--hron-gray-200); }
+html.over-band .ladder a[aria-current]::after { border-color: var(--hron-blue-400); }
+
+header { padding: 48px 0 0; }
+header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.lockup { display: block; height: 48px; width: auto; color: var(--hron-ink-primary); }
+nav { display: flex; align-items: center; gap: 32px; }
+nav a { font-size: 16px; line-height: 24px; font-weight: 500; color: var(--hron-ink-primary); text-decoration: none; }
+nav a:hover { color: var(--hron-link); }
+/* Contact is the page's one action, so it gets the panel and the card's accent tick. */
+nav .cta { display: inline-flex; align-items: center; gap: 12px; padding: 8px 16px; background: var(--card-bg); box-shadow: inset 0 0 0 1px var(--card-line); border-radius: 2px; }
+nav .cta::before { content: ""; width: 16px; border-top: 3px solid var(--hron-accent-fill);
+  transition: width var(--hron-duration-base) var(--hron-easing-standard); }
+nav .cta:hover::before { width: 24px; }
+
+main { flex: 1; }
+.tick { display: block; width: 96px; border: 0; border-top: 3px solid var(--hron-rule); margin: 0; }
+
+.hero { padding: 128px 0 96px; }
+h1 { margin: 0; font-size: 48px; line-height: 56px; font-weight: 600; max-width: 16ch; }
+.hero p { margin: 16px 0 40px; font-size: 18px; line-height: 28px; color: var(--hron-ink-secondary); max-width: 40ch; }
+
+.points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 96px; }
+.points > div { background: var(--card-bg); box-shadow: inset 0 0 0 1px var(--card-line); padding: 24px 24px 32px; border-radius: 2px; }
+.points h2 { margin: 0 0 8px; font-size: 20px; line-height: 28px; font-weight: 600; }
+.points p { margin: 0; color: var(--hron-ink-secondary); max-width: 32ch; }
+.points > div { position: relative; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* Card 1: the currency rolls. Every word sits in one grid cell, so the slot is
+   always as wide as the longest and the heading never reflows. */
+.cur { display: inline-grid; vertical-align: top; overflow: hidden; }
+.cur > span { grid-area: 1 / 1; transform: translateY(100%); opacity: 0;
+  transition: transform var(--hron-duration-base) var(--hron-easing-standard), opacity var(--hron-duration-base) var(--hron-easing-standard); }
+.cur > span.on { transform: none; opacity: 1; }
+.cur > span.out { transform: translateY(-100%); opacity: 0; }
+/* Cards 2 and 3: drawn in the plot's line, outside the text, so nothing moves. */
+.points .fx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.fx .xh { stroke: var(--hron-ink-muted); stroke-width: 1.5; fill: none; opacity: 0; transform-box: fill-box; transform-origin: center;
+  transform: scale(1.8) rotate(45deg);
+  transition: opacity var(--hron-duration-base) var(--hron-easing-standard) var(--d), transform var(--hron-duration-slow) var(--hron-easing-standard) var(--d); }
+.points > div:hover .fx .xh { opacity: 1; transform: none; }
+.fx .shape { stroke: var(--hron-ink-muted); stroke-width: 1.5; fill: none; opacity: 0;
+  transition: opacity var(--hron-duration-base) var(--hron-easing-standard); }
+.points > div:hover .fx .shape { opacity: 1; }
+.points .mark { display: block; width: 32px; border-top: 3px solid var(--hron-accent-fill); margin: 0 0 16px; }
+
+/* Surfaces. Light mode fills cards with the panel tint and sets the band in ink.
+   Dark mode draws them instead: the palette's dark panel is navy, and navy on
+   black read as a muddy pairing, so cards become a hairline on the page and the
+   band stays black between two rules. Its text uses fixed ramp steps because its
+   ground is black in both modes. */
+:root { --band-bg: var(--hron-ink-primary); --band-line: transparent; --card-bg: var(--hron-surface-panel); --card-line: transparent; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --band-bg: var(--hron-gray-1000); --band-line: var(--hron-gray-700); --card-bg: transparent; --card-line: var(--hron-gray-600); } }
+:root[data-theme="dark"] { --band-bg: var(--hron-gray-1000); --band-line: var(--hron-gray-700); --card-bg: transparent; --card-line: var(--hron-gray-600); }
+.band { position: relative; overflow: hidden; background: var(--band-bg); color: var(--hron-gray-0); padding: 96px 0; margin-bottom: 96px;
+  box-shadow: inset 0 1px 0 var(--band-line), inset 0 -1px 0 var(--band-line); }
+.band .wrap { position: relative; }
+/* The field: the plot's dot grid carried across the band, drawn by script. */
+.band canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.band h2 { margin: 0 0 40px; font-size: 28px; line-height: 36px; font-weight: 600; }
+.band ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+.band .n { display: block; font-size: 14px; line-height: 20px; font-weight: 500; font-variant-numeric: tabular-nums;
+  color: var(--hron-blue-400); padding-top: 12px; border-top: 3px solid var(--hron-blue-400); width: 32px; margin: 0 0 16px; }
+.band h3 { margin: 0 0 8px; font-size: 20px; line-height: 28px; font-weight: 600; }
+.band p { margin: 0; color: var(--hron-gray-200); }
+
+.contact { display: grid; grid-template-columns: 1fr 360px; gap: 48px; align-items: start; margin-bottom: 96px; }
+.contact h2 { margin: 0 0 8px; font-size: 28px; line-height: 36px; font-weight: 600; }
+.contact p { margin: 0 0 24px; color: var(--hron-ink-secondary); }
+.nowrap { white-space: nowrap; }
+.mail { font-size: 20px; line-height: 28px; font-weight: 600; }
+.panel { background: var(--card-bg); box-shadow: inset 0 0 0 1px var(--card-line); padding: 24px; border-radius: 2px; }
+.panel dl { margin: 0; }
+.panel dt { font-size: 12px; line-height: 16px; color: var(--hron-ink-secondary); }
+.panel dd { margin: 0 0 12px; }
+.panel dd:last-child { margin: 0; }
+
+footer { padding: 0 0 48px; font-size: 12px; line-height: 16px; color: var(--hron-ink-secondary); }
+footer .tick { margin: 0 0 12px; }
+footer p { margin: 0; }
+
+/* ---- Plot ------------------------------------------------------------------
+   A vehicle working through waypoints on the gridline token's dot field. Each
+   waypoint it reaches spawns the next, so the route never repeats. The dashed
+   line is the direct path to the next waypoint; the trail is the path actually
+   driven, which turns at a limited rate and slows into tight turns. An
+   illustration, not a diagram: no axes, no values, nothing to measure. */
+.hero .wrap { position: relative; }
+.plot { position: absolute; top: -112px; right: 48px; width: 480px; height: auto; pointer-events: none; overflow: visible; }
+.plot pattern circle { fill: var(--hron-border); }
+.plot .plan { fill: none; stroke: var(--hron-ink-muted); stroke-width: 1.5; stroke-dasharray: 3 5; opacity: 0.7; }
+.plot .plan-next { fill: none; stroke: var(--hron-border); stroke-width: 1.5; stroke-dasharray: 3 5; }
+.plot .trail polyline { fill: none; stroke: var(--hron-ink-secondary); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.plot .wp rect { fill: var(--hron-surface-page); stroke: var(--hron-ink-muted); stroke-width: 1.5;
+  transform-box: fill-box; transform-origin: center;
+  transition: fill var(--hron-duration-base) var(--hron-easing-standard), stroke var(--hron-duration-base) var(--hron-easing-standard),
+              transform var(--hron-duration-slow) var(--hron-easing-standard); }
+.plot .wp.hit rect { fill: var(--hron-ink-primary); stroke: var(--hron-ink-primary); }
+.plot .wp.gone { opacity: 0; transition: opacity var(--hron-duration-slow) var(--hron-easing-standard); }
+.plot .craft path { fill: var(--hron-accent-fill); }
+/* One vehicle at a time: a plain crossfade over the slow step, starting just
+   after the waypoint fills, so the arrival reads first and the change second. */
+.plot .craft .v { opacity: 0; transition: opacity var(--hron-duration-slow) var(--hron-easing-standard) 160ms; }
+.plot .craft .v.on { opacity: 1; }
+/* Visitors can add waypoints: a dashed ghost follows the pointer over the plot. */
+html.js .plot.flying { pointer-events: auto; }
+html.js .plot.flying.hover { cursor: crosshair; }
+.plot .ghost rect { fill: none; stroke: var(--hron-ink-muted); stroke-width: 1.5; stroke-dasharray: 2 2; opacity: 0;
+  transition: opacity var(--hron-duration-fast) var(--hron-easing-standard); }
+.plot.hover .ghost rect { opacity: 1; }
+
+/* ---- Motion ----------------------------------------------------------------
+   ui/INTERFACE.md's values: no single transition exceeds --hron-duration-slow,
+   standard easing in. The intricacy is in the sequencing, never in a long or
+   large move. Every initial hidden state is gated on html.js, so the page is
+   whole without script, and on reduced motion nothing hides at all. */
+:root { --rise: 8px; }
+html.js .ladder li { opacity: 0; }
+html.in .ladder li { opacity: 1; transition: opacity var(--hron-duration-base) var(--hron-easing-standard) var(--d, 0ms); }
+html.js .lockup .bird { clip-path: inset(0 100% 0 0); }
+html.js .lockup .glyph { opacity: 0; }
+html.js [data-reveal] { opacity: 0; transform: translateY(var(--rise)); }
+html.js .tick, html.js .mark, html.js .band .n { transform: scaleX(0); transform-origin: left; }
+html.js .plot .wp, html.js .plot .dots-g, html.js .plot .plan, html.js .plot .plan-next, html.js .plot .craft { opacity: 0; }
+html.js .plot .wp rect { transform: scale(0.25); }
+html.js .plot .wp.on rect { transform: none; }
+html.js .plot.planned .plan { opacity: 0.7; } html.js .plot.planned .plan-next { opacity: 1; }
+html.js .plot.flying .craft { opacity: 1; }
+html.js .plot.planned .plan, html.js .plot.planned .plan-next, html.js .plot.flying .craft {
+  transition: opacity var(--hron-duration-slow) var(--hron-easing-standard); }
+
+html.in .lockup .bird { clip-path: inset(0 0 0 0); transition: clip-path var(--hron-duration-slow) var(--hron-easing-standard) 80ms; }
+html.in .lockup .glyph { opacity: 1; transition: opacity var(--hron-duration-base) var(--hron-easing-standard) var(--d, 0ms); }
+.on[data-reveal], .on > [data-reveal] { opacity: 1 !important; transform: none !important;
+  transition: opacity var(--hron-duration-slow) var(--hron-easing-standard) var(--d, 0ms),
+              transform var(--hron-duration-slow) var(--hron-easing-standard) var(--d, 0ms); }
+.on .tick, .tick.on, .on .mark, .on .n { transform: none !important;
+  transition: transform var(--hron-duration-slow) var(--hron-easing-standard) var(--d, 0ms), width var(--hron-duration-base) var(--hron-easing-standard); }
+html.js .plot.on .dots-g { opacity: 1; transition: opacity var(--hron-duration-slow) var(--hron-easing-standard); }
+html.js .plot .wp.on { opacity: 1; transition: opacity var(--hron-duration-base) var(--hron-easing-standard); }
+html.js .plot .wp.on.gone { opacity: 0; transition: opacity var(--hron-duration-slow) var(--hron-easing-standard); }
+
+/* The one interaction: a card's tick extends under the pointer, a precise
+   answer to something the reader did. */
+.points .mark, .band .n { transition: width var(--hron-duration-base) var(--hron-easing-standard); }
+.points > div:hover .mark, .band li:hover .n { width: 64px; }
+a:focus-visible { outline: 2px solid var(--hron-accent-fill); outline-offset: 4px; border-radius: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+@media (max-width: 860px) {
+  .plot { display: none; }
+  .wrap { padding: 0 32px; }
+  .ladder { display: none; }
+  header { padding: 24px 0 0; }
+  .lockup { height: 32px; }
+  .hero { padding: 80px 0 64px; }
+  h1 { font-size: 40px; line-height: 48px; }
+  .points { grid-template-columns: 1fr; gap: 16px; margin-bottom: 64px; }
+  .band { padding: 64px 0; margin-bottom: 64px; }
+  .band ol { grid-template-columns: 1fr 1fr; gap: 32px 24px; }
+  .contact { grid-template-columns: 1fr; gap: 24px; margin-bottom: 64px; }
+}
+@media (max-width: 480px) {
+  .band ol { grid-template-columns: 1fr; }
+  .wrap { padding: 0 16px; }
+  nav .navlink { display: none; }
+  nav .cta { padding: 4px 12px; gap: 8px; }
+  .lockup { height: 28px; }
+}
+</style>
+<script>
+/* Armed before first paint: an unarmed frame would flash the finished state. */
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('js');
+</script>
+</head>
+<body>
+<ol class="ladder" aria-label="Sections">
+  <li><a href="#top" aria-current="true"><span>Overview</span></a></li>
+  <li><a href="#principles"><span>Principles</span></a></li>
+  <li><a href="#build"><span>What We Build</span></a></li>
+  <li><a href="#contact"><span>Work With Us</span></a></li>
+</ol>
+<header id="top">
+  <div class="wrap">
+    <a href="/" aria-label="Heron Precision, home"><svg class="lockup" role="img" aria-label="Heron Precision" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 941.1 176.58" fill="currentColor">
+  <g>
+    <g>
+      <path d="M553.9,36.41l-4.97,10.61h31.67l-5.27,11.29h-31.67l-4.89,10.53h31.67l-5.34,11.36h-46.27l25.73-55.15h46.27l-5.27,11.36h-31.67Z"/>
+      <path d="M648.01,25.05c1.15,0,2.17,.23,3.05,.68,.88,.45,1.5,1.05,1.88,1.81,.38,.75,.55,1.65,.53,2.71-.03,1.05-.31,2.16-.87,3.31l-6.32,13.54c-.45,.9-1,1.76-1.66,2.56-.65,.8-1.38,1.54-2.18,2.22-.8,.68-1.64,1.28-2.52,1.81-.88,.53-1.82,.89-2.82,1.09l2.86,5.87-9.1,19.56h-14.6l8.13-17.45h-23.77l-8.13,17.45h-14.6l25.73-55.15h44.39Zm-11.29,11.36h-23.77l-7,14.97h23.77l7-14.97Z"/>
+      <path d="M714.15,25.05c1.2,0,2.22,.23,3.05,.68s1.45,1.05,1.88,1.81c.43,.75,.61,1.67,.56,2.75-.05,1.08-.35,2.17-.9,3.27l-17.76,38.14c-.55,1.15-1.29,2.27-2.22,3.35-.93,1.08-1.96,1.98-3.08,2.71-1.13,.73-2.32,1.32-3.57,1.77-1.25,.45-2.48,.68-3.69,.68h-36.26c-1.1,0-2.08-.23-2.93-.68-.85-.45-1.49-1.05-1.92-1.81-.43-.75-.62-1.65-.56-2.71,.05-1.05,.35-2.16,.9-3.31l17.76-38.14c.55-1.1,1.29-2.18,2.22-3.23,.93-1.05,1.96-1.97,3.08-2.75,1.13-.78,2.32-1.39,3.57-1.84,1.25-.45,2.46-.68,3.61-.68h36.26Zm-11.29,11.29h-24.08l-15.33,32.58h24.07l15.33-32.58Z"/>
+      <path d="M786.37,25.05l-25.73,55.15h-14.67s-5.96-33.31-5.96-33.31l-15.56,33.31h-14.67l25.73-55.15h14.67l5.98,33.31,15.62-33.31h14.6Z"/>
+      <polygon points="517.03 25.05 506.82 46.95 483.04 46.95 493.26 25.05 478.59 25.05 452.86 80.2 467.53 80.2 477.74 58.31 501.52 58.31 491.3 80.2 505.97 80.2 531.7 25.05 517.03 25.05"/>
+    </g>
+    <g>
+      <path d="M555.68,96.38c1.15,0,2.17,.23,3.05,.68,.88,.45,1.5,1.05,1.88,1.81,.38,.75,.55,1.65,.53,2.71-.03,1.05-.31,2.16-.87,3.31l-6.32,13.54c-.45,.9-1,1.76-1.65,2.56-.65,.8-1.38,1.54-2.18,2.22-.8,.68-1.64,1.28-2.52,1.81-.88,.53-1.82,.89-2.82,1.09l2.86,5.87-9.1,19.56h-14.6l8.13-17.45h-23.77l-8.13,17.45h-14.6l25.73-55.15h44.39Zm-11.29,11.36h-23.77l-7,14.97h23.77l7-14.97Z"/>
+      <path d="M586.37,107.74l-4.97,10.61h31.67l-5.27,11.29h-31.67l-4.89,10.53h31.67l-5.34,11.36h-46.27l25.73-55.15h46.27l-5.27,11.36h-31.67Z"/>
+      <path d="M676.2,151.52l25.73-55.15h14.67l-25.73,55.15h-14.67Z"/>
+      <path d="M761.44,112.93l3.16-6.62h-25.28l-5.79,12.49h31.3c1.2,0,2.21,.23,3.01,.68,.8,.45,1.42,1.07,1.84,1.84,.42,.78,.61,1.69,.56,2.75-.05,1.05-.35,2.16-.9,3.31l-7.3,15.65c-.55,1.15-1.29,2.26-2.22,3.31-.93,1.05-1.96,1.96-3.09,2.71-1.13,.75-2.31,1.35-3.54,1.81-1.23,.45-2.45,.68-3.65,.68h-37.39c-1.15,0-2.14-.23-2.97-.68-.83-.45-1.46-1.06-1.88-1.84-.43-.78-.62-1.68-.56-2.71,.05-1.03,.35-2.12,.9-3.27l3.76-8.05h14.6l-3.09,6.62h25.2l5.94-12.79h-31.3c-1.2,0-2.22-.23-3.05-.68-.83-.45-1.44-1.07-1.84-1.84-.4-.78-.58-1.68-.53-2.71,.05-1.03,.35-2.14,.9-3.35l7.15-15.35c.55-1.15,1.29-2.26,2.22-3.31,.93-1.05,1.96-1.96,3.08-2.71,1.13-.75,2.32-1.35,3.57-1.81,1.25-.45,2.46-.68,3.61-.68h37.39c1.2,0,2.22,.23,3.05,.68s1.44,1.07,1.84,1.84c.4,.78,.58,1.68,.53,2.71-.05,1.03-.33,2.12-.83,3.27l-3.76,8.05h-14.67Z"/>
+      <path d="M770.92,151.52l25.73-55.15h14.67l-25.73,55.15h-14.67Z"/>
+      <path d="M868.88,96.38c1.2,0,2.22,.23,3.05,.68s1.45,1.05,1.88,1.81c.43,.75,.61,1.67,.56,2.75-.05,1.08-.35,2.17-.9,3.27l-17.76,38.14c-.55,1.15-1.29,2.27-2.22,3.35-.93,1.08-1.96,1.98-3.08,2.71-1.13,.73-2.32,1.32-3.57,1.77-1.25,.45-2.48,.68-3.69,.68h-36.26c-1.1,0-2.08-.23-2.93-.68-.85-.45-1.49-1.05-1.92-1.81-.43-.75-.62-1.65-.56-2.71,.05-1.05,.35-2.16,.9-3.31l17.76-38.14c.55-1.1,1.29-2.18,2.22-3.23,.93-1.05,1.96-1.97,3.08-2.75,1.13-.78,2.32-1.39,3.57-1.84,1.25-.45,2.46-.68,3.61-.68h36.26Zm-11.29,11.29h-24.08l-15.33,32.58h24.07l15.33-32.58Z"/>
+      <path d="M941.1,96.38l-25.73,55.15h-14.67l-5.96-33.31-15.56,33.31h-14.67l25.73-55.15h14.67l5.98,33.31,15.62-33.31h14.6Z"/>
+      <path d="M685.86,98.86c-.43-.75-1.05-1.35-1.88-1.81-.83-.45-1.84-.68-3.05-.68h-36.26c-1.15,0-2.36,.23-3.61,.68-1.25,.45-2.45,1.07-3.57,1.84-1.13,.78-2.16,1.69-3.08,2.75-.93,1.05-1.67,2.13-2.22,3.23l-17.76,38.14c-.55,1.15-.85,2.26-.9,3.31-.05,1.05,.14,1.96,.56,2.71,.43,.75,1.06,1.35,1.92,1.81,.85,.45,1.83,.68,2.93,.68h36.26c1.2,0,2.43-.23,3.69-.68,1.25-.45,2.45-1.04,3.57-1.77,1.13-.73,2.16-1.63,3.08-2.71,.93-1.08,1.67-2.19,2.22-3.35l5.99-12.87h-14.69l-4.74,10.08h-24.08l15.33-32.58h24.08l-4.85,10.31h14.63l6.09-13.09c.55-1.1,.85-2.19,.9-3.27,.05-1.08-.14-1.99-.56-2.75Z"/>
+      <path d="M496.09,98.9c-.4-.78-1.02-1.39-1.84-1.84-.83-.45-1.84-.68-3.05-.68h-45.89l-5.3,11.36-20.43,43.79h14.6l4.44-9.48h0s.06,0,.06,0h31.24c1.2,0,2.42-.23,3.65-.68,1.23-.45,2.41-1.05,3.54-1.81,1.13-.75,2.16-1.65,3.08-2.71,.92-1.04,1.64-2.13,2.19-3.27l1.35-2.9,1.38-2.96,9.31-19.99,1.3-2.78c.55-1.2,.85-2.32,.9-3.35,.05-1.03-.13-1.93-.53-2.71Zm-27.04,31.79h-25.09l10.71-22.95h25.09l-10.71,22.95Z"/>
+    </g>
+  </g>
+  <g class="bird">
+    <path d="M324.59,11.23c-4.71-.54-9.44-.78-14.18-.7-25.95,.46-85.28,3.61-95.84,2.95C160.92,10.11,0,0,0,0,12.37,26.42,32.17,42.95,62.83,48.82c7.81,1.5,15.75,2.11,23.7,2.11h59.04s-53.67,12.89-77.73,15.85l-19.34,2.38c9.12,18.45,27.89,28.44,48.05,28.63,4.17,.04,8.34-.45,12.44-1.25l70.36-13.68h0c-26.6,15.77-81.84,30.09-81.84,30.09,12.23,16.92,33.13,23.53,53.19,19.51,3.14-.63,6.2-1.59,9.19-2.71l59.08-22.15s-34.81,29.84-65.25,39.93h0c13.14,12.2,30.59,15.08,47.54,10.26,5.56-1.58,10.82-4.06,15.73-7.11l40.53-25.16s-22.72,32.8-41.43,43.52h0c21.1,7.31,42.5,7.9,55.31,7.36-1.56-7.7-2.34-14.8-2.45-21.36-1.21-69.97,73.14-77.37,73.14-77.37,4.35-.46,8.01-3.68,8.9-8.17,1.31-6.6-3.56-12.07-10.29-12.07H190.55s124.58-22,124.58-22c2.13-.41,6.02-3.79,12.77-6.62,6.22-2.61,12.9-3.91,19.65-3.82h96.19s0,0,0,0l-119.15-13.78Z"/>
+    <path d="M339.15,103.15c-6.56,1.56-11.99,4.03-16.59,6.74-16.01,9.46-21.24,24.01-22.09,37.32-.33,5.11,.11,10.24,1.07,15.26s2.28,11.87,2.34,12.1c0,0,0,0,0,0,4.28-.72,8.48-1.58,12.58-2.59-6.99-20.98-3.34-41.34,10.43-49.63,14.55-8.75,35.71-1.23,51.27,16.81,13.79-13.89,21.88-30.65,21.88-48.73,0-9.2-2.12-18.05-5.98-26.36-.2,.58-.01,26-54.91,39.08Z"/>
+  </g>
+</svg></a>
+    <nav data-reveal style="--d:480ms"><a class="navlink" href="#build">What We Build</a><a class="cta" href="#contact">Contact</a></nav>
+  </div>
+</header>
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <h1 data-reveal style="--d:360ms">Autonomy hardware and software.</h1>
+      <p data-reveal style="--d:440ms">Components that integrate into uncrewed systems across air, ground, and sea.</p>
+      <hr class="tick" style="--d:540ms">
+      <svg class="plot" viewBox="0 0 520 400" aria-hidden="true">
+        <defs>
+          <pattern id="dotgrid" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="12" cy="12" r="1"/></pattern>
+          <radialGradient id="fade" cx="55%" cy="50%" r="55%"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+          <mask id="fademask"><rect width="520" height="400" fill="url(#fade)"/></mask>
+        </defs>
+        <g class="dots-g" mask="url(#fademask)"><rect width="520" height="400" fill="url(#dotgrid)"/></g>
+        <g class="trail"></g>
+        <path class="plan-next"/>
+        <path class="plan"/>
+        <g class="wps"></g>
+        <g class="ghost"><rect x="-5" y="-5" width="10" height="10"/></g>
+        <g class="craft"></g>
+      </svg>
+    </div>
+  </section>
+  <div class="wrap points" id="principles" data-group>
+    <div data-reveal style="--d:0ms"><span class="mark" style="--d:160ms"></span><h2>Capability per <span class="sr">Dollar</span><span class="cur" aria-hidden="true"><span class="on">Dollar</span><span>Euro</span><span>Koruna</span><span>Pound</span><span>Zloty</span><span>Krona</span><span>Hryvnia</span><span>Forint</span></span></h2><p>Our products consistently punch above their weight class on size, mass, capability, and cost.</p></div>
+    <div data-reveal style="--d:80ms"><svg class="fx xhs" aria-hidden="true"></svg><span class="mark" style="--d:240ms"></span><h2>Tracked Provenance</h2><p>Internationally fielded and United States owned. Supply chain tracked to the part, auditable on request.</p></div>
+    <div data-reveal style="--d:160ms"><svg class="fx" aria-hidden="true"><path class="shape"/></svg><span class="mark" style="--d:320ms"></span><h2>Interoperable by Design</h2><p>Standard protocols and interfaces with <span class="nowrap">link-agnostic</span> communications, so systems take on new payloads and roles after deployment.</p></div>
+  </div>
+<section class="band" aria-labelledby="build">
+    <div class="wrap">
+      <h2 id="build" data-reveal>What We Build</h2>
+      <ol data-group>
+        <li data-reveal style="--d:80ms"><span class="n" style="--d:240ms">01</span><h3>Flight Control</h3><p>Flight controllers on open firmware, for air, ground, and sea vehicles.</p></li>
+        <li data-reveal style="--d:160ms"><span class="n" style="--d:320ms">02</span><h3>Autonomy Compute</h3><p>Companion computers that run autonomy beside the flight stack you already use.</p></li>
+        <li data-reveal style="--d:240ms"><span class="n" style="--d:400ms">03</span><h3>Chassis Integration</h3><p>Chassis and components designed as one system, balancing weight, strength, capability, cost, and durability.</p></li>
+        <li data-reveal style="--d:320ms"><span class="n" style="--d:480ms">04</span><h3>Development</h3><p>Integration and robotics development for partners, from concept to hardware.</p></li>
+      </ol>
+    </div>
+  </section>
+  <div class="wrap contact" id="contact" data-group>
+    <div data-reveal>
+      <h2>Work With Us</h2>
+      <p>Product inquiries, integration, and partner development.</p>
+      <a class="mail" href="mailto:solutions@heronprecision.com">solutions@heronprecision.com</a>
+    </div>
+    <div class="panel" data-reveal style="--d:120ms">
+      <dl>
+        <dt>Legal name</dt><dd>Heron Precision LLC</dd>
+        <dt>Entity</dt><dd>A Delaware limited liability company</dd>
+        <dt>Ownership</dt><dd>100% United States owned</dd>
+        <dt>Address</dt><dd>8 The Green, Suite A<br>Dover, DE 19901<br>United States</dd>
+      </dl>
+    </div>
+  </div>
+</main>
+<footer>
+  <div class="wrap" data-group>
+    <hr class="tick">
+    <p>© 2026 Heron Precision LLC</p>
+  </div>
+</footer>
+<script>
+/* Motion is an enhancement: html.js arms the hidden states only when this runs,
+   and reduced motion skips arming them entirely. */
+(function () {
+  var root = document.documentElement;
+  var live = root.classList.contains('js');
+  var plot = document.querySelector('.plot');
+  /* A refresh starts at the top, where the load sequence is meant to be seen,
+     and in-page links scroll without writing a fragment into the address, so
+     the next refresh does not jump to it. A shared link with a fragment still
+     lands on its section. */
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    var t = document.querySelector(a.getAttribute('href'));
+    if (!t) return;
+    e.preventDefault();
+    t.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  });
+  var sim = plot && getComputedStyle(plot).display !== 'none' ? makeSim(plot, live) : null;
+  sections();
+  cards();
+  field(document.querySelector('.band'), live);
+  if (!live) { if (sim) sim.still(); return; }
+  var loaded = performance.now();
+
+  /* Wordmark: letters in reading order, measured rather than trusted to the
+     file's element order, which is not left to right. */
+  var glyphs = Array.prototype.slice.call(document.querySelectorAll('.lockup > g:first-of-type path, .lockup > g:first-of-type polygon'));
+  glyphs.forEach(function (g) { g.classList.add('glyph'); });
+  glyphs.map(function (g) { return [g.getBBox().x + g.getBBox().y * 0.35, g]; })
+        .sort(function (a, b) { return a[0] - b[0]; })
+        .forEach(function (p, i) { p[1].style.setProperty('--d', (220 + i * 18) + 'ms'); });
+
+  /* Scroll reveals: a group reveals together once a fifth of it is visible. */
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      /* A group already in view at load waits for the hero to finish, so the
+         page reads top to bottom instead of all at once. */
+      var wait = performance.now() - loaded < 1200 ? 640 : 0;
+      e.target.querySelectorAll('[style*="--d"], [data-reveal]').forEach(function (n) {
+        var d = parseInt(n.style.getPropertyValue('--d')) || 0;
+        n.style.setProperty('--d', (d + wait) + 'ms');
+      });
+      e.target.classList.add('on');
+      e.target.querySelectorAll('[data-reveal]').forEach(function (n) { n.classList.add('on'); });
+      io.unobserve(e.target);
+    });
+  }, { threshold: 0.2 });
+  requestAnimationFrame(function () { requestAnimationFrame(function () {
+    document.querySelectorAll('[data-group], .band').forEach(function (n) { io.observe(n); });
+  }); });
+
+  /* Two frames and a forced style read, so the hidden state is actually
+     painted before it is released; otherwise the browser coalesces both and
+     nothing transitions. */
+  void root.offsetHeight;
+  requestAnimationFrame(function () { requestAnimationFrame(function () {
+    root.classList.add('in');
+    document.querySelectorAll('header [data-reveal], .hero [data-reveal], .hero .tick').forEach(function (n) { n.classList.add('on'); });
+    if (sim) sim.start();
+  }); });
+})();
+
+/* Card hovers. Card 1 rolls its currency through once and lands back on Dollar;
+   leaving early returns it straight away. Card 2 registers a crosshair into each
+   corner. Card 3 morphs one outline through four shapes, sampled at the same 48
+   angles so any two interpolate radially. */
+function cards() {
+  var cs = document.querySelectorAll('.points > div');
+  var cur = cs[0].querySelector('.cur'), words = Array.prototype.slice.call(cur.children), at = 0, timer = null;
+  function go(i) {
+    if (i === at) return;
+    var o = words[at], n = words[i];
+    o.classList.remove('on'); o.classList.add('out');
+    n.classList.remove('out'); n.classList.add('pre');
+    n.style.transition = 'none'; n.style.transform = 'translateY(100%)'; void n.offsetHeight;
+    n.style.transition = ''; n.style.transform = ''; n.classList.remove('pre'); n.classList.add('on');
+    setTimeout(function () { o.classList.remove('out'); }, 220);
+    at = i;
+  }
+  cs[0].addEventListener('mouseenter', function () {
+    clearInterval(timer); var k = 0;
+    timer = setInterval(function () {
+      k++; go(k % words.length);
+      if (k % words.length === 0) clearInterval(timer);
+    }, 640);
+  });
+  cs[0].addEventListener('mouseleave', function () { clearInterval(timer); go(0); });
+
+  var NS = 'http://www.w3.org/2000/svg', xs = cs[1].querySelector('.xhs');
+  /* Each corner is anchored by percentage and inset 12 px by the path itself. */
+  [['0', '0', 12, 12], ['100%', '0', -12, 12], ['100%', '100%', -12, -12], ['0', '100%', 12, -12]].forEach(function (c, i) {
+    var g = document.createElementNS(NS, 'svg');
+    g.setAttribute('x', c[0]); g.setAttribute('y', c[1]); g.setAttribute('overflow', 'visible');
+    var p = document.createElementNS(NS, 'path'), x = c[2], y = c[3];
+    p.setAttribute('class', 'xh'); p.setAttribute('d', 'M' + (x - 5) + ' ' + y + ' H' + (x + 5) + ' M' + x + ' ' + (y - 5) + ' V' + (y + 5));
+    p.style.setProperty('--d', (i * 60) + 'ms');
+    g.appendChild(p); xs.appendChild(g);
+  });
+
+  var shape = cs[2].querySelector('.shape'), N = 48;
+  function poly(n, R, a0) {
+    var out = [];
+    for (var k = 0; k < N; k++) {
+      var t = 2 * Math.PI * k / N;
+      if (!n) { out.push(R); continue; }
+      var seg = 2 * Math.PI / n, u = ((t - a0) % seg + seg) % seg;
+      out.push(R * Math.cos(Math.PI / n) / Math.cos(u - Math.PI / n));
+    }
+    return out;
+  }
+  var SH = [poly(0, 7), poly(4, 8.5, Math.PI / 4), poly(3, 9, -Math.PI / 2), poly(6, 8, 0)];
+  var radii = SH[0].slice(), si = 0, raf = null, cyc = null;
+  function paint() {
+    var cx = shape.ownerSVGElement.clientWidth - 32, cy = 28;
+    shape.setAttribute('d', 'M' + radii.map(function (r, k) {
+      var t = 2 * Math.PI * k / N; return (cx + r * Math.cos(t)).toFixed(2) + ' ' + (cy + r * Math.sin(t)).toFixed(2);
+    }).join(' L') + 'Z');
+  }
+  function morph(to) {
+    var from = radii.slice(), t0 = performance.now();
+    cancelAnimationFrame(raf);
+    (function f(now) {
+      var u = Math.min(1, (now - t0) / 320), e = 1 - Math.pow(1 - u, 3);
+      radii = from.map(function (r, k) { return r + (SH[to][k] - r) * e; }); paint();
+      if (u < 1) raf = requestAnimationFrame(f);
+    })(t0);
+  }
+  paint(); addEventListener('resize', paint);
+  cs[2].addEventListener('mouseenter', function () {
+    clearInterval(cyc);
+    cyc = setInterval(function () { si = (si + 1) % SH.length; morph(si); }, 900);
+  });
+  cs[2].addEventListener('mouseleave', function () { clearInterval(cyc); si = 0; morph(0); });
+}
+
+/* The band's field: the plot's 24 px dot grid, carried across the band.
+   It sweeps in left to right when the band first scrolls into view, drifts a
+   little slower than the page as it scrolls, brightens softly around the
+   pointer, and a click or tap sends one ring out across it, lighting the dots
+   as it passes. Like the plot it is a small simulation rather than a
+   transition, so it is the one other place a movement outlasts 320 ms. It draws
+   only while something is changing and the band is on screen. With reduced
+   motion it is the still grid and nothing else. */
+function field(band, live) {
+  if (!band) return;
+  var cv = document.createElement('canvas'), cx = cv.getContext && cv.getContext('2d');
+  if (!cx) return;
+  cv.setAttribute('aria-hidden', 'true');
+  band.insertBefore(cv, band.firstChild);
+  var css = getComputedStyle(document.documentElement);
+  function rgb(name) {
+    var h = css.getPropertyValue(name).trim().replace('#', '');
+    return [0, 2, 4].map(function (i) { return parseInt(h.substr(i, 2), 16); });
+  }
+  var BASE = rgb('--hron-gray-500'), LIT = rgb('--hron-gray-200'), PING = rgb('--hron-blue-400');
+  var G = 24, LENS = 180, SPEED = 0.75, RING = 34, PARALLAX = 0.12, SWEEP = 640;
+  var w = 0, h = 0, dpr = 1, vis = false, raf = 0;
+  var px = 0, py = 0, tx = 0, ty = 0, lens = 0, lensTo = 0;
+  /* born: when the sweep started; null until the band is first seen. */
+  var pings = [], born = live ? null : -1e9;
+  function size() {
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    w = band.clientWidth; h = band.clientHeight;
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    draw(performance.now());
+  }
+  function mix(a, b, t) { return a + (b - a) * t; }
+  function draw(now) {
+    cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cx.clearRect(0, 0, w, h);
+    if (born === null) return false;
+    var off = live ? ((-band.getBoundingClientRect().top * PARALLAX) % G + G) % G : 0;
+    var sweep = (now - born) / SWEEP, busy = sweep < 1.4;
+    pings = pings.filter(function (p) { return (now - p.t) * SPEED < p.max + RING; });
+    for (var y = off - G / 2; y < h + G; y += G) {
+      for (var x = G / 2; x < w; x += G) {
+        /* The sweep: each dot fades in over the 30% of the sweep after the front passes it. */
+        var a = busy ? Math.max(0, Math.min(1, (sweep - x / w) / 0.3)) : 1;
+        if (!a) continue;
+        var k = 0, q = 0;
+        if (lens > 0.001) {
+          var d = Math.hypot(x - px, y - py);
+          if (d < LENS) { var u = 1 - d / LENS; k = lens * u * Math.sqrt(u); }
+        }
+        for (var i = 0; i < pings.length; i++) {
+          var p = pings[i], front = (now - p.t) * SPEED, e = Math.abs(Math.hypot(x - p.x, y - p.y) - front);
+          if (e < RING) q = Math.max(q, (1 - e / RING) * Math.sqrt(1 - front / (p.max + RING)));
+        }
+        var c = q > k ? PING : LIT, t = Math.max(k, q);
+        cx.globalAlpha = a * mix(0.28, 0.95, t);
+        cx.fillStyle = 'rgb(' + Math.round(mix(BASE[0], c[0], t)) + ',' + Math.round(mix(BASE[1], c[1], t)) + ',' + Math.round(mix(BASE[2], c[2], t)) + ')';
+        cx.beginPath(); cx.arc(x, y, mix(1, 1.6, t), 0, 6.2832); cx.fill();
+      }
+    }
+    return busy || pings.length > 0;
+  }
+  function tick(now) {
+    raf = 0;
+    /* The lens follows the pointer with a short lag and fades in and out. */
+    px += (tx - px) * 0.18; py += (ty - py) * 0.18;
+    lens += (lensTo - lens) * 0.14;
+    var busy = draw(now) | Math.abs(lensTo - lens) > 0.002 | Math.hypot(tx - px, ty - py) > 0.3;
+    if (busy && vis) raf = requestAnimationFrame(tick);
+  }
+  function wake() { if (!raf && vis) raf = requestAnimationFrame(tick); }
+  size();
+  if ('ResizeObserver' in window) new ResizeObserver(size).observe(band); else addEventListener('resize', size);
+  if (!live) return;
+  new IntersectionObserver(function (es) {
+    vis = es[0].isIntersecting;
+    if (vis && born === null && es[0].intersectionRatio >= 0.2) born = performance.now();
+    if (vis) wake();
+  }, { threshold: [0, 0.2] }).observe(band);
+  addEventListener('scroll', function () { if (vis) wake(); }, { passive: true });
+  band.addEventListener('pointermove', function (e) {
+    var r = band.getBoundingClientRect();
+    tx = e.clientX - r.left; ty = e.clientY - r.top;
+    if (lens < 0.01) { px = tx; py = ty; }
+    lensTo = e.pointerType === 'mouse' ? 1 : 0; wake();
+  });
+  band.addEventListener('pointerleave', function () { lensTo = 0; wake(); });
+  band.addEventListener('pointerdown', function (e) {
+    var r = band.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+    var max = Math.max(Math.hypot(x, y), Math.hypot(w - x, y), Math.hypot(x, h - y), Math.hypot(w - x, h - y));
+    if (pings.length >= 3) pings.shift();
+    pings.push({ x: x, y: y, t: performance.now(), max: Math.min(max, 720) });
+    wake();
+  });
+}
+
+/* The section index follows the section whose top has passed 40% of the
+   window, or the last one at the bottom of the page. */
+function sections() {
+  var ladder = document.querySelector('.ladder'), links = Array.prototype.slice.call(document.querySelectorAll('.ladder a'));
+  var targets = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+  var band = document.querySelector('.band'), cur = 0;
+  links.forEach(function (a, i) { a.parentNode.style.setProperty('--d', (420 + i * 60) + 'ms'); });
+  function show(i) {
+    if (i === cur) return;
+    links[cur].removeAttribute('aria-current'); links[i].setAttribute('aria-current', 'true');
+    cur = i;
+  }
+  function update() {
+    var h = innerHeight, i = 0;
+    targets.forEach(function (t, k) { if (t && t.getBoundingClientRect().top < h * 0.4) i = k; });
+    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) i = targets.length - 1;
+    show(i);
+    var b = band.getBoundingClientRect(), t = ladder.getBoundingClientRect();
+    document.documentElement.classList.toggle('over-band', b.top < t.bottom && b.bottom > t.top);
+  }
+  addEventListener('scroll', update, { passive: true });
+  addEventListener('resize', update);
+  update();
+}
+
+/* The plot. A vehicle with a turn-rate limit chases the next waypoint; reaching
+   it fills it, spawns another beyond the last, and lengthens the trail a little.
+   Steering is proportional with a capped turn rate and turn acceleration, and the
+   vehicle slows as its heading error grows, which tightens the turn radius and
+   keeps it from orbiting a waypoint. Units are the SVG's viewBox. */
+function makeSim(plot, live) {
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(name, attrs, parent) {
+    var e = document.createElementNS(NS, name);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  /* Seeded so a capture can be repeated: ?seed=N. Otherwise every visit differs. */
+  var m = /[?&]seed=(\d+)/.exec(location.search);
+  var seed = m ? +m[1] : (Math.random() * 4294967296) >>> 0;
+  function rnd() {
+    seed = seed + 0x6D2B79F5 | 0;
+    var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  }
+
+  var trailG = plot.querySelector('.trail'), wpG = plot.querySelector('.wps');
+  var plan = plot.querySelector('.plan'), next = plot.querySelector('.plan-next');
+  var craft = plot.querySelector('.craft'), ghost = plot.querySelector('.ghost');
+  var K = 12, segs = [];
+  for (var i = 0; i < K; i++) segs.push(el('polyline', { opacity: Math.pow(1 - i / K, 1.4).toFixed(3) }, trailG));
+
+  /* Four vehicles, top-down, nose on +x: plane, boat, car, quadcopter. One
+     swaps for the next at every waypoint. */
+  function sym(half) {
+    var pts = half.concat(half.slice(1, -1).reverse().map(function (p) { return [p[0], -p[1]]; }));
+    return 'M' + pts.map(function (p) { return p.join(' '); }).join(' L') + 'Z';
+  }
+  function box(x, y, w, h) { return 'M' + x + ' ' + y + ' h' + w + ' v' + h + ' h' + (-w) + 'Z'; }
+  function ring(cx, cy, r, r2) {
+    function c(r) { return 'M' + (cx - r) + ' ' + cy + ' a' + r + ' ' + r + ' 0 1 0 ' + 2 * r + ' 0 a' + r + ' ' + r + ' 0 1 0 ' + (-2 * r) + ' 0Z'; }
+    return c(r) + c(r2);
+  }
+  function bar(x1, y1, x2, y2, w) {
+    var L = Math.hypot(x2 - x1, y2 - y1), nx = -(y2 - y1) / L * w / 2, ny = (x2 - x1) / L * w / 2;
+    return 'M' + (x1 + nx) + ' ' + (y1 + ny) + ' L' + (x2 + nx) + ' ' + (y2 + ny) + ' L' + (x2 - nx) + ' ' + (y2 - ny) + ' L' + (x1 - nx) + ' ' + (y1 - ny) + 'Z';
+  }
+  var VEHICLES = [
+    [sym([[9, 0], [7, 1], [2, 1.2], [-1, 8], [-3.2, 8], [-2.2, 1.2], [-6.5, 1], [-8.2, 3.6], [-9.4, 3.6], [-8.6, 0]])],
+    [sym([[9.5, 0], [6, 2.6], [1, 3.8], [-8, 3.4], [-8, 0]]) + box(-4.5, -1.8, 5, 3.6)],
+    ['M-6 -4 H6 Q8 -4 8 -2 V2 Q8 4 6 4 H-6 Q-8 4 -8 2 V-2 Q-8 -4 -6 -4Z' + box(1.5, -3, 2.3, 6) + box(-5.2, -2.8, 1.2, 5.6),
+     box(3, -5, 3, 1) + box(3, 4, 3, 1) + box(-6, -5, 3, 1) + box(-6, 4, 3, 1)],
+    [bar(-5.5, -5.5, 5.5, 5.5, 1.6) + bar(-5.5, 5.5, 5.5, -5.5, 1.6) + box(-2.6, -2.2, 5.2, 4.4) + box(2.6, -0.8, 1.6, 1.6),
+     ring(5.5, 5.5, 3.6, 2.6) + ring(5.5, -5.5, 3.6, 2.6) + ring(-5.5, 5.5, 3.6, 2.6) + ring(-5.5, -5.5, 3.6, 2.6)]
+  ];
+  var icons = VEHICLES.map(function (parts) {
+    var g = el('g', { class: 'v' }, craft);
+    parts.forEach(function (d) { el('path', { d: d, 'fill-rule': 'evenodd' }, g); });
+    return g;
+  });
+  var form = 0;
+  icons[0].classList.add('on');
+
+  var V = 42, W = 1.3, ACC = 24, WACC = 3.2, HIT = 8;
+  var S = { x: 150, y: 300, h: -0.6, v: 0, w: 0 };
+  var trail = [{ x: S.x, y: S.y, s: 0 }], arc = 0, trailMax = 150, since = 0, queue = [];
+
+  /* Waypoints stay inside an ellipse biased right, clear of the headline and
+     inside the dot field's fade, with a turn radius of margin to the box so an
+     overshoot never leaves it. */
+  function inField(x, y) { var dx = (x - 280) / 170, dy = (y - 200) / 140; return dx * dx + dy * dy < 1; }
+  function spawn() {
+    var a = queue.length ? queue[queue.length - 1] : S;
+    var b = queue.length > 1 ? queue[queue.length - 2] : queue.length ? S : { x: S.x - Math.cos(S.h), y: S.y - Math.sin(S.h) };
+    var dir = Math.atan2(a.y - b.y, a.x - b.x);
+    for (var t = 0; t < 80; t++) {
+      var ang = dir + (rnd() * 2 - 1) * 1.9, d = 110 + rnd() * 130;
+      var x = a.x + Math.cos(ang) * d, y = a.y + Math.sin(ang) * d;
+      if (!inField(x, y) || Math.hypot(x - S.x, y - S.y) < 90) continue;
+      if (queue.some(function (q) { return Math.hypot(q.x - x, q.y - y) < 80; })) continue;
+      return add(x, y);
+    }
+    return add(280 + (rnd() - 0.5) * 120, 200 + (rnd() - 0.5) * 100);
+  }
+  /* A visitor may have three waypoints of their own pending; reaching one frees
+     a place for the next. */
+  var MINE = 3, mine = 0, hovering = false;
+  function canAdd() { return mine < MINE; }
+  function add(x, y, user) {
+    if (queue.length >= 8) return;
+    if (user) mine++;
+    var g = el('g', { class: 'wp', transform: 'translate(' + x.toFixed(1) + ' ' + y.toFixed(1) + ')' }, wpG);
+    el('rect', { x: -4, y: -4, width: 8, height: 8 }, g);
+    if (live) { void g.getBoundingClientRect(); requestAnimationFrame(function () { requestAnimationFrame(function () { g.classList.add('on'); }); }); }
+    else g.classList.add('on');
+    queue.push({ x: x, y: y, g: g, user: user });
+  }
+  function reach(q) {
+    q.g.classList.add('hit');
+    if (q.user) { mine--; plot.classList.toggle('hover', hovering && canAdd()); }
+    trailMax = Math.min(trailMax + 40, 560);
+    icons[form].classList.remove('on'); form = (form + 1) % icons.length; icons[form].classList.add('on');
+    if (!live) { q.g.remove(); return; }
+    setTimeout(function () { q.g.classList.add('gone'); setTimeout(function () { q.g.remove(); }, 400); }, 1600);
+  }
+
+  function step(dt) {
+    var t = queue[0];
+    if (!t) return;
+    var err = Math.atan2(t.y - S.y, t.x - S.x) - S.h;
+    err = Math.atan2(Math.sin(err), Math.cos(err));
+    var wT = Math.max(-W, Math.min(W, 2.4 * err));
+    S.w += Math.max(-WACC * dt, Math.min(WACC * dt, wT - S.w));
+    var vT = V * (0.3 + 0.7 * Math.max(0, Math.cos(err)));
+    S.v += Math.max(-ACC * dt, Math.min(ACC * dt, vT - S.v));
+    S.h += S.w * dt;
+    S.x += Math.cos(S.h) * S.v * dt; S.y += Math.sin(S.h) * S.v * dt;
+    var last = trail[trail.length - 1], ds = Math.hypot(S.x - last.x, S.y - last.y);
+    if (ds > 1.5) {
+      arc += ds; trail.push({ x: S.x, y: S.y, s: arc });
+      while (trail.length > 2 && arc - trail[1].s > trailMax) trail.shift();
+    }
+    since += dt;
+    if (Math.hypot(t.x - S.x, t.y - S.y) < HIT || since > 14) { since = 0; reach(queue.shift()); if (queue.length < 2) spawn(); }
+  }
+
+  function f(n) { return n.toFixed(1); }
+  function draw() {
+    /* The plane foreshortens slightly while turning, which reads as banking. */
+    var bank = form === 0 ? 1 - 0.2 * Math.abs(S.w) / W : 1;
+    craft.setAttribute('transform', 'translate(' + S.x.toFixed(2) + ' ' + S.y.toFixed(2) + ') rotate(' + (S.h * 180 / Math.PI).toFixed(2) + ') scale(1 ' + bank.toFixed(3) + ')');
+    var q0 = queue[0], q1 = queue[1];
+    plan.setAttribute('d', q0 ? 'M' + f(S.x) + ' ' + f(S.y) + ' L' + f(q0.x) + ' ' + f(q0.y) : '');
+    next.setAttribute('d', q0 && q1 ? 'M' + queue.map(function (q) { return f(q.x) + ' ' + f(q.y); }).join(' L') : '');
+    /* The trail in K slices by distance from the head, each fainter, sharing
+       their boundary points so the line stays continuous. */
+    var L = trailMax / K, bufs = [];
+    for (var i = 0; i < K; i++) bufs.push([]);
+    bufs[0].push(f(S.x) + ',' + f(S.y));
+    for (var j = trail.length - 1; j >= 0; j--) {
+      var k = Math.floor((arc - trail[j].s) / L);
+      if (k >= K) break;
+      var pt = f(trail[j].x) + ',' + f(trail[j].y);
+      if (k > 0 && !bufs[k].length && bufs[k - 1].length) bufs[k - 1].push(pt);
+      bufs[k].push(pt);
+    }
+    segs.forEach(function (sg, i) { sg.setAttribute('points', bufs[i].join(' ')); });
+  }
+
+  /* Runs only while the plot is on screen; a hidden tab stops it anyway. */
+  var started = false, running = false, visible = true, lastTs = null;
+  function frame(ts) {
+    if (!running) return;
+    if (lastTs !== null) { step(Math.min(0.05, (ts - lastTs) / 1000)); draw(); }
+    lastTs = ts;
+    requestAnimationFrame(frame);
+  }
+  function run() { if (started && visible && !running) { running = true; lastTs = null; requestAnimationFrame(frame); } }
+  new IntersectionObserver(function (es) {
+    visible = es[0].isIntersecting;
+    if (visible) run(); else running = false;
+  }).observe(plot);
+
+  return {
+    /* Reduced motion: the same simulation, run ahead offline and shown as one
+       still frame, so the plot is whole but nothing moves. */
+    still: function () {
+      spawn(); spawn();
+      for (var n = 0; n < 60 * 16; n++) step(1 / 60);
+      draw();
+    },
+    /* Load: the field, then each waypoint lands, then the route, then the vehicle. */
+    start: function () {
+      draw();
+      plot.classList.add('on');
+      setTimeout(function () { spawn(); draw(); }, 700);
+      setTimeout(function () { spawn(); draw(); }, 940);
+      setTimeout(function () { plot.classList.add('planned'); }, 1180);
+      setTimeout(function () { plot.classList.add('flying'); started = true; run(); }, 1400);
+      /* A click adds a waypoint at the end of the route, kept inside the box. */
+      function at(e) {
+        var pt = plot.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+        var p = pt.matrixTransform(plot.getScreenCTM().inverse());
+        return { x: Math.max(24, Math.min(496, p.x)), y: Math.max(24, Math.min(376, p.y)) };
+      }
+      plot.addEventListener('pointermove', function (e) {
+        var p = at(e);
+        ghost.setAttribute('transform', 'translate(' + f(p.x) + ' ' + f(p.y) + ')');
+        hovering = true;
+        plot.classList.toggle('hover', canAdd());
+      });
+      plot.addEventListener('pointerleave', function () { hovering = false; plot.classList.remove('hover'); });
+      plot.addEventListener('click', function (e) {
+        if (!started || !canAdd()) return;
+        var p = at(e); add(p.x, p.y, true); draw();
+        plot.classList.toggle('hover', canAdd());
+      });
+    }
+  };
+}
+</script>
+</body>
+</html>
